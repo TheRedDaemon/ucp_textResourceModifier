@@ -2,14 +2,14 @@
   <project path="ucp_textResourceModifier/ucp_textResourceModifier/ucp_textResourceModifier.vcxproj"/>
   
   <files> <!-- first without could be equal to build="Release"-->
-    <file src="ucp_textResourceModifier/$(Configuration)/inputHandler.dll" />
+    <file src="ucp_textResourceModifier/$(Configuration)/textResourceModifier.dll" />
     <file src="*.lua" target="." />
     <file src="*.yml" target="." />
   </files>
   
   <files build="Debug">
-    <file src="ucp_textResourceModifier/$(Configuration)/inputHandler.dll" />
-    <file src="ucp_textResourceModifier/$(Configuration)/inputHandler.pdb" />
+    <file src="ucp_textResourceModifier/$(Configuration)/textResourceModifier.dll" />
+    <file src="ucp_textResourceModifier/$(Configuration)/textResourceModifier.pdb" />
     <file src="*.lua" target="." />
     <file src="*.yml" target="." />
   </files>

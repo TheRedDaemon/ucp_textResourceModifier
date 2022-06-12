@@ -11,7 +11,7 @@ extern "C" __declspec(dllexport) int __cdecl luaopen_textResourceModifier(lua_St
 {
   if (!LuaLog::init(L))
   {
-    luaL_error(L, "[InputHandler]: Failed to receive Log functions.");
+    luaL_error(L, "[textResourceModifier]: Failed to receive Log functions.");
   }
 
   lua_newtable(L); // push a new table on the stack
