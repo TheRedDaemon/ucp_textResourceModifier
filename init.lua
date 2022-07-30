@@ -9,20 +9,20 @@ exports.enable = function(self, moduleConfig, globalConfig)
 
   local getTextFuncStart = core.AOBScan("8b 44 24 04 8d 50 fb", 0x400000)
   if getTextFuncStart == nil then
-    print("'textResourceModifier' was unable to find the start of the address that selects the right text strings.")
+    log(ERROR, "'textResourceModifier' was unable to find the start of the address that selects the right text strings.")
     error("'textResourceModifier' can not be initialized.")
   end
   local backJmpAddress = getTextFuncStart + 7 -- address to jmp back to
   
   local callToLoadCRTexFunc = core.AOBScan("e8 ? ? ? ff e8 ? ? ? ff 6a 08", 0x400000)
   if callToLoadCRTexFunc == nil then
-    print("'textResourceModifier' was unable to find the call to load the CRTex file.")
+    log(ERROR, "'textResourceModifier' was unable to find the call to load the CRTex file.")
     error("'textResourceModifier' can not be initialized.")
   end
   
   local realLoadCRTexFunc = core.AOBScan("51 53 55 56 33 ed 8b f1 55 68", 0x400000)
   if realLoadCRTexFunc == nil then
-    print("'textResourceModifier' was unable to find the CRTex load func.")
+    log(ERROR, "'textResourceModifier' was unable to find the CRTex load func.")
     error("'textResourceModifier' can not be initialized.")
   end
 
