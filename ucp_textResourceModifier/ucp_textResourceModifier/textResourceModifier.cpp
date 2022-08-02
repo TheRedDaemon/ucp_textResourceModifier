@@ -56,6 +56,18 @@ bool TextHandler::SetText(int offsetIndex, int numInGroup, const char* utf8Str)
 }
 
 
+const char* TextHandler::GetText(int offsetIndex, int numInGroup)
+{
+  if (!textManagerPtr)
+  {
+    LuaLog::log(LuaLog::LOG_WARNING, "[textResourceModifier]: Unable to get text. CRTex not yet loaded.");
+    return "ERROR: NO TEXT RESOURCE YET LOADED.";
+  }
+  return textManagerPtr->getMapText(offsetIndex, numInGroup);
+}
+
+
+
 // source: https://stackoverflow.com/a/62070624
 // apparently not without issues, but hopefully save enough
 void TextHandler::LogTranscodingError()
@@ -114,11 +126,13 @@ bool TextHandler::TransformUTF8ToSHCLocale(const char* utf8Str, std::string& str
 // "this" will be the games text manager
 void __thiscall TextHandler::interceptedLoadCRTex()
 {
+  textManagerPtr = this;
+
   // call actual load function
-  (*this.*realLoadCRTFunc)();
+  (*textManagerPtr.*realLoadCRTFunc)();
 
   // read codepage value
-  gameCodepage = *((int*) this + 4); // fifth dword in class
+  gameCodepage = *((int*)textManagerPtr + 4); // fifth dword in class
 
   if (!gameCodepage)
   {
@@ -174,6 +188,11 @@ extern "C" __declspec(dllexport) bool __stdcall SetText(int offsetIndex, int num
   return TextHandler::SetText(offsetIndex, numInGroup, utf8Str);
 }
 
+extern "C" __declspec(dllexport) const char* __stdcall GetText(int offsetIndex, int numInGroup)
+{
+  return TextHandler::GetText(offsetIndex, numInGroup);
+}
+
 
 /* export LUA */
 
@@ -192,5 +211,23 @@ extern "C" __declspec(dllexport) int __cdecl lua_SetText(lua_State * L)
 
   bool res{ TextHandler::SetText(lua_tointeger(L, 1), lua_tointeger(L, 2), lua_tostring(L, 3)) };
   lua_pushboolean(L, res);
+  return 1;
+}
+
+
+extern "C" __declspec(dllexport) int __cdecl lua_GetText(lua_State * L)
+{
+  int n{ lua_gettop(L) };    /* number of arguments */
+  if (n != 2)
+  {
+    luaL_error(L, "[textResourceModifier]: lua_GetText: Invalid number of args.");
+  }
+
+  if (!(lua_isinteger(L, 1) && lua_isinteger(L, 2)))
+  {
+    luaL_error(L, "[textResourceModifier]: lua_GetText: Wrong input fields.");
+  }
+
+  lua_pushstring(L, TextHandler::GetText(lua_tointeger(L, 1), lua_tointeger(L, 2)));
   return 1;
 }

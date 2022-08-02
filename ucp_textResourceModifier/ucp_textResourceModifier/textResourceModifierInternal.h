@@ -19,12 +19,14 @@ public:
 
 private:
 
+  inline static TextHandler* textManagerPtr{ nullptr }; // used to get text using this module
   inline static int gameCodepage{};
   inline static std::unordered_map<int, std::string> stringMap{};
 
 public:
 
   static bool SetText(int offsetIndex, int numInGroup, const char* utf8Str);
+  static const char* GetText(int offsetIndex, int numInGroup);
 
   // required to set function
   // important: will not receive actual ptr to an object of this class
@@ -49,7 +51,9 @@ private:
 /* exports */
 
 extern "C" __declspec(dllexport) bool __stdcall SetText(int offsetIndex, int numInGroup, const char* utf8Str);
+extern "C" __declspec(dllexport) const char* __stdcall GetText(int offsetIndex, int numInGroup);
 
 /* LUA */
 
 extern "C" __declspec(dllexport) int __cdecl lua_SetText(lua_State * L);
+extern "C" __declspec(dllexport) int __cdecl lua_GetText(lua_State * L);

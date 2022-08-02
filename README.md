@@ -36,24 +36,36 @@ The provided functions are the following:
 
 
 * `bool SetText(int offsetIndex, int numInGroup, const char* utf8Str)`  
-  The only function of the module.
   Allows to register an UTF-8-string for a specific combination of `offsetIndex` and  `numInGroup`.
   If the string pointer is `null`, the registered string is removed and the native handler will once again be used.
   Returns `true` if the action was successful.
   Note, that strings registered before start-up will be transformed after the games own initialization.
   If they fail there, they are removed and an error is printed to the console.
 
+* `const char* GetText(int offsetIndex, int numInGroup)`  
+  Returns the current string for the given `offsetIndex` and `numInGroup`.
+  This might either be the games own string or the current overwriting string.
+  Only works after the game text is first loaded.
+  Note, that there are no safety checks, since this module should also allow the register strings on new indexes.
+  Use with caution, either for tests, or if you are sure this index exits.
+
 ### Lua-Exports
 
 The Lua exports are parameters and functions accessible through the module object.
 
 * `bool SetText(int offsetIndex, int numInGroup, string utf8Str)`  
-  The only function of the module.
   Allows to register an UTF-8-string for a specific combination of `offsetIndex` and  `numInGroup`.
   If the string is `nil`, the registered string is removed and the native handler will once again be used.
   Returns `true` if the action was successful.
   Note, that strings registered before start-up will be transformed after the games own initialization.
   If they fail there, they are removed and an error is printed to the console.
+
+* `string GetText(int offsetIndex, int numInGroup)`  
+  Returns the current string for the given `offsetIndex` and `numInGroup`.
+  This might either be the games own string or the current overwriting string.
+  Only works after the game text is first loaded.
+  Note, that there are no safety checks, since this module should also allow the register strings on new indexes.
+  Use with caution, either for tests, or if you are sure this index exits.
 
 
 ### Special Thanks
