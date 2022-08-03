@@ -37,6 +37,8 @@ exports.enable = function(self, moduleConfig, globalConfig)
   -- no wrapping needed?
   self.SetText = requireTable.lua_SetText
   self.GetText = requireTable.lua_GetText
+  self.TransformText = requireTable.lua_TransformText
+  self.GetLanguage = requireTable.lua_GetLanguage
   
 
   --[[ modify code ]]--

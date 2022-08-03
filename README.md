@@ -49,6 +49,22 @@ The provided functions are the following:
   Note, that there are no safety checks, since this module should also allow the register strings on new indexes.
   Use with caution, either for tests, or if you are sure this index exits.
 
+* `const char* GetLanguage()`  
+  Simply returns the language string for the loaded text source file.
+  Only works after the game text is first loaded.
+
+* `void TransformText(const char* utf8Str, TextReceiver* receiver, void* misc)`  
+  Receives an UTF-8 string and tries to transform it into the games text encoding.
+  Can be used for text if it should not be managed by this module.
+  The `receiver` is used to return the transformed string or a dummy string on failure.
+  `misc` is passed through to the receiver function.
+  Only works after the game text is first loaded.
+
+  * `void TextReceiver(const char* transformedString, void* misc)`  
+    The structure of the function pointer needed by `TransformText`.
+    Is called with the transformed string and the `misc` given before.
+
+
 ### Lua-Exports
 
 The Lua exports are parameters and functions accessible through the module object.
@@ -66,6 +82,15 @@ The Lua exports are parameters and functions accessible through the module objec
   Only works after the game text is first loaded.
   Note, that there are no safety checks, since this module should also allow the register strings on new indexes.
   Use with caution, either for tests, or if you are sure this index exits.
+
+* `string GetLanguage()`  
+  Simply returns the language string for the loaded text source file.
+  Only works after the game text is first loaded.
+
+* `string TransformText(string utf8Str)`  
+  Receives an UTF-8 string and tries to transform it into the games text encoding.
+  Can be used for text if it should not be managed by this module.
+  Only works after the game text is first loaded.
 
 
 ### Special Thanks

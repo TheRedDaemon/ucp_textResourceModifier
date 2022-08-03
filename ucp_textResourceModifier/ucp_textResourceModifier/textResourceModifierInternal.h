@@ -27,6 +27,7 @@ public:
 
   static bool SetText(int offsetIndex, int numInGroup, const char* utf8Str);
   static const char* GetText(int offsetIndex, int numInGroup);
+  static std::string TransformText(const char* utf8Str);
 
   // required to set function
   // important: will not receive actual ptr to an object of this class
@@ -52,8 +53,12 @@ private:
 
 extern "C" __declspec(dllexport) bool __stdcall SetText(int offsetIndex, int numInGroup, const char* utf8Str);
 extern "C" __declspec(dllexport) const char* __stdcall GetText(int offsetIndex, int numInGroup);
+extern "C" __declspec(dllexport) void __stdcall TransformText(const char* utf8Str, TRMH::FuncTextReceiver receiver, void* misc);
+extern "C" __declspec(dllexport) const char* __stdcall GetLanguage();
 
 /* LUA */
 
 extern "C" __declspec(dllexport) int __cdecl lua_SetText(lua_State * L);
 extern "C" __declspec(dllexport) int __cdecl lua_GetText(lua_State * L);
+extern "C" __declspec(dllexport) int __cdecl lua_TransformText(lua_State * L);
+extern "C" __declspec(dllexport) int __cdecl lua_GetLanguage(lua_State * L);

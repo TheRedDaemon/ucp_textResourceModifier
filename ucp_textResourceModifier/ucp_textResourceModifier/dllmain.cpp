@@ -41,6 +41,10 @@ extern "C" __declspec(dllexport) int __cdecl luaopen_textResourceModifier(lua_St
   lua_setfield(L, -2, TextResourceModifierHeader::NAME_SET_TEXT);
   lua_pushinteger(L, (DWORD)GetText);
   lua_setfield(L, -2, TextResourceModifierHeader::NAME_GET_TEXT);
+  lua_pushinteger(L, (DWORD)TransformText);
+  lua_setfield(L, -2, TextResourceModifierHeader::NAME_TRANSFORM_TEXT);
+  lua_pushinteger(L, (DWORD)GetLanguage);
+  lua_setfield(L, -2, TextResourceModifierHeader::NAME_GET_LANGUAGE);
 
   // add table
   lua_setfield(L, -2, "funcPtr");
@@ -51,6 +55,10 @@ extern "C" __declspec(dllexport) int __cdecl luaopen_textResourceModifier(lua_St
   lua_setfield(L, -2, "lua_SetText");
   lua_pushcfunction(L, lua_GetText);
   lua_setfield(L, -2, "lua_GetText");
+  lua_pushcfunction(L, lua_TransformText);
+  lua_setfield(L, -2, "lua_TransformText");
+  lua_pushcfunction(L, lua_GetLanguage);
+  lua_setfield(L, -2, "lua_GetLanguage");
 
   return 1;
 }

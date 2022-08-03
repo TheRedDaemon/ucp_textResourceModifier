@@ -66,6 +66,22 @@ const char* TextHandler::GetText(int offsetIndex, int numInGroup)
   return textManagerPtr->getMapText(offsetIndex, numInGroup);
 }
 
+std::string TextHandler::TransformText(const char* utf8Str)
+{
+  if (!textManagerPtr)
+  {
+    LuaLog::log(LuaLog::LOG_WARNING, "[textResourceModifier]: Unable to transform text. CRTex not yet loaded.");
+    return "ERROR: NO TEXT RESOURCE YET LOADED.";
+  }
+
+  std::string strContainer{ "ERROR: FAILED TO TRANSFORM TEXT." };
+  if (!TransformUTF8ToSHCLocale(utf8Str, strContainer))
+  {
+    LuaLog::log(LuaLog::LOG_WARNING, "[textResourceModifier]: Unable to transform text. Transformation failed.");
+    return strContainer;
+  }
+  return strContainer;
+}
 
 
 // source: https://stackoverflow.com/a/62070624
@@ -73,7 +89,7 @@ const char* TextHandler::GetText(int offsetIndex, int numInGroup)
 void TextHandler::LogTranscodingError()
 {
   DWORD lastError{ GetLastError() };
-  LuaLog::log(LuaLog::LOG_WARNING, ("[TextResourceModifier]: Failed transcoding: " + std::system_category().message(lastError)).c_str());
+  LuaLog::log(LuaLog::LOG_WARNING, ("[textResourceModifier]: Failed transcoding: " + std::system_category().message(lastError)).c_str());
 }
 
 
@@ -193,6 +209,17 @@ extern "C" __declspec(dllexport) const char* __stdcall GetText(int offsetIndex, 
   return TextHandler::GetText(offsetIndex, numInGroup);
 }
 
+extern "C" __declspec(dllexport) void __stdcall TransformText(const char* utf8Str, TRMH::FuncTextReceiver receiver, void* misc)
+{
+  std::string holder{ TextHandler::TransformText(utf8Str) };
+  receiver(holder.c_str(), misc);
+}
+
+extern "C" __declspec(dllexport) const char* __stdcall GetLanguage()
+{
+  return TextHandler::GetText(6, 0);
+}
+
 
 /* export LUA */
 
@@ -204,7 +231,7 @@ extern "C" __declspec(dllexport) int __cdecl lua_SetText(lua_State * L)
     luaL_error(L, "[textResourceModifier]: lua_SetText: Invalid number of args.");
   }
 
-  if (!(lua_isinteger(L, 1) && lua_isinteger(L, 2) && (lua_isstring(L, 3)) || lua_isnoneornil(L, 3)))
+  if (!(lua_isinteger(L, 1) && lua_isinteger(L, 2) && (lua_isstring(L, 3) || lua_isnoneornil(L, 3))))
   {
     luaL_error(L, "[textResourceModifier]: lua_SetText: Wrong input fields.");
   }
@@ -213,7 +240,6 @@ extern "C" __declspec(dllexport) int __cdecl lua_SetText(lua_State * L)
   lua_pushboolean(L, res);
   return 1;
 }
-
 
 extern "C" __declspec(dllexport) int __cdecl lua_GetText(lua_State * L)
 {
@@ -229,5 +255,34 @@ extern "C" __declspec(dllexport) int __cdecl lua_GetText(lua_State * L)
   }
 
   lua_pushstring(L, TextHandler::GetText(lua_tointeger(L, 1), lua_tointeger(L, 2)));
+  return 1;
+}
+
+extern "C" __declspec(dllexport) int __cdecl lua_TransformText(lua_State * L)
+{
+  int n{ lua_gettop(L) };    /* number of arguments */
+  if (n != 1)
+  {
+    luaL_error(L, "[textResourceModifier]: lua_TransformText: Invalid number of args.");
+  }
+
+  if (!lua_isstring(L, 1))
+  {
+    luaL_error(L, "[textResourceModifier]: lua_TransformText: Wrong input fields.");
+  }
+
+  lua_pushstring(L, TextHandler::TransformText(lua_tostring(L, 1)).c_str());
+  return 1;
+}
+
+extern "C" __declspec(dllexport) int __cdecl lua_GetLanguage(lua_State * L)
+{
+  int n{ lua_gettop(L) };    /* number of arguments */
+  if (n != 0)
+  {
+    luaL_error(L, "[textResourceModifier]: lua_GetLanguage: Invalid number of args.");
+  }
+
+  lua_pushstring(L, GetLanguage());
   return 1;
 }
