@@ -15,7 +15,7 @@ The module uses the single text receiver function of Stronghold Crusader for thi
 It is detoured to a function that uses the index and the number in this index of the requested string to generate a key.
 If a string was registered for it, the custom string is returned, otherwise it falls back to the default handler.
 
-The API toe register strings expects UTF-8 and transforms it to the current encoding of the game.
+The API to register strings expects UTF-8 and transforms it to the current encoding of the game.
 
 
 ### Usage
