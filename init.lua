@@ -1,5 +1,16 @@
 local exports = {}
 
+local function getAddress(aob, errorMsg, modifierFunc)
+  local address = core.AOBScan(aob, 0x400000)
+  if address == nil then
+    log(ERROR, errorMsg)
+    error("'textResourceModifier' can not be initialized.")
+  end
+  if modifierFunc == nil then
+    return address;
+  end
+  return modifierFunc(address)
+end
 
 --[[ Main Func ]]--
 
@@ -7,32 +18,25 @@ exports.enable = function(self, moduleConfig, globalConfig)
 
   --[[ get addresses ]]--
 
-  local getTextFuncStart = core.AOBScan("8b 44 24 04 8d 50 fb", 0x400000)
-  if getTextFuncStart == nil then
-    print("'textResourceModifier' was unable to find the start of the address that selects the right text strings.")
-    error("'textResourceModifier' can not be initialized.")
-  end
+  local getTextFuncStart = getAddress(
+    "8b 44 24 04 8d 50 fb",
+    "'textResourceModifier' was unable to find the start of the address that selects the right text strings."
+  )
   local backJmpAddress = getTextFuncStart + 7 -- address to jmp back to
   
-  local callToLoadCRTexFunc = core.AOBScan("e8 ? ? ? ff e8 ? ? ? ff 6a 08", 0x400000)
-  if callToLoadCRTexFunc == nil then
-    print("'textResourceModifier' was unable to find the call to load the CRTex file.")
-    error("'textResourceModifier' can not be initialized.")
-  end
+  local callToLoadCRTexFunc = getAddress(
+    "e8 ? ? ? ff e8 ? ? ? ff 6a 08",
+    "'textResourceModifier' was unable to find the call to load the CRTex file."
+  )
   
-  local realLoadCRTexFunc = core.AOBScan("51 53 55 56 33 ed 8b f1 55 68", 0x400000)
-  if realLoadCRTexFunc == nil then
-    print("'textResourceModifier' was unable to find the CRTex load func.")
-    error("'textResourceModifier' can not be initialized.")
-  end
+  local realLoadCRTexFunc = getAddress(
+    "51 53 55 56 33 ed 8b f1 55 68",
+    "'textResourceModifier' was unable to find the CRTex load func."
+  )
 
   --[[ load module ]]--
   
   local requireTable = require("textResourceModifier.dll") -- loads the dll in memory and runs luaopen_textResourceModifier
-  
-  for name, addr in pairs(requireTable.funcPtr) do
-    self[name] = addr
-  end
   
   -- no wrapping needed?
   self.SetText = requireTable.lua_SetText

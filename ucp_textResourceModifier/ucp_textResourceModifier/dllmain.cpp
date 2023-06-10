@@ -9,11 +9,6 @@
 // lua module load
 extern "C" __declspec(dllexport) int __cdecl luaopen_textResourceModifier(lua_State * L)
 {
-  if (!LuaLog::init(L))
-  {
-    luaL_error(L, "[textResourceModifier]: Failed to receive Log functions.");
-  }
-
   lua_newtable(L); // push a new table on the stack
 
   // simple replace
@@ -35,20 +30,6 @@ extern "C" __declspec(dllexport) int __cdecl luaopen_textResourceModifier(lua_St
   lua_pushinteger(L, (DWORD)&TextHandler::toNativeTextAddr);
   lua_setfield(L, -2, "address_ToNativeTextAddr");
 
-  // add functions
-  lua_newtable(L); // push function table
-  lua_pushinteger(L, (DWORD)SetText);
-  lua_setfield(L, -2, TextResourceModifierHeader::NAME_SET_TEXT);
-  lua_pushinteger(L, (DWORD)GetText);
-  lua_setfield(L, -2, TextResourceModifierHeader::NAME_GET_TEXT);
-  lua_pushinteger(L, (DWORD)TransformText);
-  lua_setfield(L, -2, TextResourceModifierHeader::NAME_TRANSFORM_TEXT);
-  lua_pushinteger(L, (DWORD)GetLanguage);
-  lua_setfield(L, -2, TextResourceModifierHeader::NAME_GET_LANGUAGE);
-
-  // add table
-  lua_setfield(L, -2, "funcPtr");
-
   // return lua funcs
 
   lua_pushcfunction(L, lua_SetText);
@@ -61,21 +42,4 @@ extern "C" __declspec(dllexport) int __cdecl luaopen_textResourceModifier(lua_St
   lua_setfield(L, -2, "lua_GetLanguage");
 
   return 1;
-}
-
-// entry point
-BOOL APIENTRY DllMain(HMODULE,
-  DWORD  ul_reason_for_call,
-  LPVOID
-)
-{
-  switch (ul_reason_for_call)
-  {
-    case DLL_PROCESS_ATTACH:
-    case DLL_THREAD_ATTACH:
-    case DLL_THREAD_DETACH:
-    case DLL_PROCESS_DETACH:
-      break;
-  }
-  return TRUE;
 }

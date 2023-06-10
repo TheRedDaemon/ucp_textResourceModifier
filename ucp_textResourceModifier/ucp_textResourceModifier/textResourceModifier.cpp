@@ -1,4 +1,3 @@
-#pragma once
 
 #include "pch.h"
 
@@ -60,7 +59,7 @@ const char* TextHandler::GetText(int offsetIndex, int numInGroup)
 {
   if (!textManagerPtr)
   {
-    LuaLog::log(LuaLog::LOG_WARNING, "[textResourceModifier]: Unable to get text. CRTex not yet loaded.");
+    Log(LOG_WARNING, "[textResourceModifier]: Unable to get text. CRTex not yet loaded.");
     return "ERROR: NO TEXT RESOURCE YET LOADED.";
   }
   return textManagerPtr->getMapText(offsetIndex, numInGroup);
@@ -70,14 +69,14 @@ std::string TextHandler::TransformText(const char* utf8Str)
 {
   if (!textManagerPtr)
   {
-    LuaLog::log(LuaLog::LOG_WARNING, "[textResourceModifier]: Unable to transform text. CRTex not yet loaded.");
+    Log(LOG_WARNING, "[textResourceModifier]: Unable to transform text. CRTex not yet loaded.");
     return "ERROR: NO TEXT RESOURCE YET LOADED.";
   }
 
   std::string strContainer{ "ERROR: FAILED TO TRANSFORM TEXT." };
   if (!TransformUTF8ToSHCLocale(utf8Str, strContainer))
   {
-    LuaLog::log(LuaLog::LOG_WARNING, "[textResourceModifier]: Unable to transform text. Transformation failed.");
+    Log(LOG_WARNING, "[textResourceModifier]: Unable to transform text. Transformation failed.");
     return strContainer;
   }
   return strContainer;
@@ -89,7 +88,7 @@ std::string TextHandler::TransformText(const char* utf8Str)
 void TextHandler::LogTranscodingError()
 {
   DWORD lastError{ GetLastError() };
-  LuaLog::log(LuaLog::LOG_WARNING, ("[textResourceModifier]: Failed transcoding: " + std::system_category().message(lastError)).c_str());
+  Log(LOG_WARNING, ("[textResourceModifier]: Failed transcoding: " + std::system_category().message(lastError)).c_str());
 }
 
 
@@ -152,7 +151,7 @@ void __thiscall TextHandler::interceptedLoadCRTex()
 
   if (!gameCodepage)
   {
-    LuaLog::log(LuaLog::LOG_ERROR, "[textResourceModifier]: Failed to get games codepage. No text changes will be applied.");
+    Log(LOG_ERROR, "[textResourceModifier]: Failed to get games codepage. No text changes will be applied.");
   }
 
   // transform all given strings so far
