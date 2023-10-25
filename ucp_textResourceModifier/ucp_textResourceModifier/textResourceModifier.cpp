@@ -95,8 +95,8 @@ void TextHandler::LogTranscodingError()
 // the ptr needs to point to a valid c string, and these are never truly empty (/0)
 bool TextHandler::TransformUTF8ToSHCLocale(const char* utf8Str, std::string& strToAssignResTo)
 {
-  static std::vector<WCHAR> wCharBuffer{};
-  static std::vector<char> resCharBuffer{};
+  std::vector<WCHAR> wCharBuffer{};
+  std::vector<char> resCharBuffer{};
 
   int sizeAndRes{ MultiByteToWideChar(CP_UTF8, 0, utf8Str, -1, 0, 0) };
   if (!sizeAndRes)
