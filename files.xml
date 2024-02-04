@@ -5,6 +5,7 @@
     <file src="ucp_textResourceModifier/$(Configuration)/textResourceModifier.dll" />
     <file src="*.lua" target="." />
     <file src="*.yml" target="." />
+    <file src="locale" target="." />
   </files>
   
   <files build="Debug">
@@ -12,5 +13,6 @@
     <file src="ucp_textResourceModifier/$(Configuration)/textResourceModifier.pdb" />
     <file src="*.lua" target="." />
     <file src="*.yml" target="." />
+    <file src="locale" target="." />
   </files>
 </module>
