@@ -39,10 +39,10 @@ exports.enable = function(self, moduleConfig, globalConfig)
   local requireTable = require("textResourceModifier.dll") -- loads the dll in memory and runs luaopen_textResourceModifier
   
   -- no wrapping needed?
-  self.SetText = requireTable.lua_SetText
-  self.GetText = requireTable.lua_GetText
-  self.TransformText = requireTable.lua_TransformText
-  self.GetLanguage = requireTable.lua_GetLanguage
+  self.SetText = function(self, ...) return requireTable.lua_SetText(...) end
+  self.GetText = function(self, ...) return requireTable.lua_GetText(...) end
+  self.TransformText = function(self, ...) return requireTable.lua_TransformText(...) end
+  self.GetLanguage = function(self, ...) return requireTable.lua_GetLanguage(...) end
   
 
   --[[ modify code ]]--
